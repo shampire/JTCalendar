@@ -18,6 +18,8 @@
     
     NSUInteger currentMonthIndex;
     BOOL cacheLastWeekMode; // Avoid some operations
+    
+    NSDate *beginDate;
 };
 
 @end
@@ -107,6 +109,8 @@
 {
     NSDate *currentDate = date;
     
+    beginDate = date;
+    
     NSCalendar *calendar = self.calendarManager.calendarAppearance.calendar;
     
     {
@@ -136,6 +140,16 @@
     }
 }
 
+- (NSInteger) getCurrentMonthIndex
+{
+    return currentMonthIndex;
+}
+
+- (NSDate *) getBeginningOfMonth
+{
+    return beginDate;
+}
+
 #pragma mark - JTCalendarManager
 
 - (void)setCalendarManager:(JTCalendar *)calendarManager
@@ -152,6 +166,18 @@
 {
     for(JTCalendarWeekView *view in weeksViews){
         [view reloadData];
+        
+        // Doesn't need to do other weeks
+        if(self.calendarManager.calendarAppearance.isWeekMode){
+            break;
+        }
+    }
+}
+
+- (void)reloadDataForDates:(NSArray *)dateArray
+{
+    for(JTCalendarWeekView *view in weeksViews){        
+        [view reloadDataForDates:dateArray];
         
         // Doesn't need to do other weeks
         if(self.calendarManager.calendarAppearance.isWeekMode){

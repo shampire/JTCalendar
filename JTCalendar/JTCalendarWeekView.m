@@ -8,6 +8,7 @@
 #import "JTCalendarWeekView.h"
 
 #import "JTCalendarDayView.h"
+#import "Calendar.h"
 
 @interface JTCalendarWeekView (){
     NSArray *daysViews;
@@ -89,6 +90,15 @@
             NSInteger monthIndex = comps.month;
                         
             [view setIsOtherMonth:monthIndex != self.currentMonthIndex];
+            
+            comps = [calendar components:NSWeekdayCalendarUnit fromDate:currentDate];
+            switch ([comps weekday]) {
+                case 1:
+                    [view setIsWeekendOrHoliday:YES];
+                    break;
+                default:
+                    break;
+            }
         }
         else{
             [view setIsOtherMonth:NO];
@@ -118,6 +128,30 @@
     for(JTCalendarDayView *view in daysViews){
         [view reloadData];
     }
+}
+
+- (void)reloadDataForDates:(NSArray *)dateArray
+{
+    for (Calendar *calendar in dateArray) {
+        for (JTCalendarDayView *view in daysViews) {
+            if ([[self onlyDate:view.date] isEqualToDate:[self onlyDate:[calendar Date]]]) {
+                [view setCalendar:calendar];
+                [view reloadData];
+                [view reloadAppearance];
+            }
+        }
+    }
+}
+
+- (NSDate *)onlyDate:(NSDate *)date
+{
+    unsigned int flags = NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit;
+    NSCalendar* calendar = [NSCalendar currentCalendar];
+    
+    NSDateComponents* components = [calendar components:flags fromDate:date];
+    
+    NSDate* dateOnly = [calendar dateFromComponents:components];
+    return dateOnly;
 }
 
 - (void)reloadAppearance

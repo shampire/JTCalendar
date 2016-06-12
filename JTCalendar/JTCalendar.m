@@ -78,6 +78,15 @@
     [self.contentView reloadData];
 }
 
+- (void)reloadDataForDates:(NSArray *)dateArray
+{
+    // Erase cache
+    [self.dataCache reloadData];
+    
+    [self repositionViews];
+    [self.contentView reloadDataForDates:dateArray];
+}
+
 - (void)reloadAppearance
 {
     [self.menuMonthsView reloadAppearance];
@@ -197,10 +206,18 @@
         if([self.dataSource respondsToSelector:@selector(calendarDidLoadPreviousPage)]){
             [self.dataSource calendarDidLoadPreviousPage];
         }
+        
+        if (self.delegate && ([self.delegate respondsToSelector:@selector(loadPreviousMonth)])) {
+            [self.delegate loadPreviousMonth];
+        }
     }
     else if(currentPage > (NUMBER_PAGES_LOADED / 2)){
         if([self.dataSource respondsToSelector:@selector(calendarDidLoadNextPage)]){
             [self.dataSource calendarDidLoadNextPage];
+        }
+        
+        if (self.delegate && ([self.delegate respondsToSelector:@selector(loadNextMonth)])) {
+            [self.delegate loadNextMonth];
         }
     }
 }
@@ -227,6 +244,11 @@
 
 - (void)loadNextPage
 {
+    if(self.calendarAppearance.isWeekMode){
+        NSLog(@"JTCalendar loadNextMonth ignored");
+        return;
+    }
+    
     self.menuMonthsView.scrollEnabled = NO;
     
     CGRect frame = self.contentView.frame;
@@ -237,6 +259,11 @@
 
 - (void)loadPreviousPage
 {
+    if(self.calendarAppearance.isWeekMode){
+        NSLog(@"JTCalendar loadPreviousMonth ignored");
+        return;
+    }
+    
     self.menuMonthsView.scrollEnabled = NO;
     
     CGRect frame = self.contentView.frame;

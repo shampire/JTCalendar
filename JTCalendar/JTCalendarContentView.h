@@ -16,6 +16,7 @@
 @property (nonatomic) NSDate *currentDate;
 
 - (void)reloadData;
+- (void)reloadDataForDates:(NSArray *)dateArray;
 - (void)reloadAppearance;
 
 @end
