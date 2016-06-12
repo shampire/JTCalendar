@@ -16,5 +16,6 @@
 - (void)setBeginningOfMonth:(NSDate *)date;
 - (void)reloadData;
 - (void)reloadAppearance;
+- (void)reloadDataForDates:(NSArray *)dateArray;
 
 @end
